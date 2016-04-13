@@ -21,9 +21,17 @@ body {
   display: none;
 }
 
+.salesgroup text {
+  fill: black;
+  font: 10px sans-serif;
+  text-anchor: end;
+}
+
 </style>
 <body>
 <script src="//d3js.org/d3.v3.min.js"></script>
+<!-- tool tip -->
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 <script>
 
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -75,7 +83,7 @@ d3.csv("salesdata_v2.csv", function(error, data) {
 
   // set domain of color scale
   // this returns all the keys in one object in the array of objects "data"
-  // ... except for the "State" key
+  // ... except for the "salesgroup" key
   // These keys are the column slices names
   //
   //  COLOR DOMAIN
@@ -88,16 +96,29 @@ d3.csv("salesdata_v2.csv", function(error, data) {
   // molding
   // skylights
   //
-  //  There are 7 values in the domain and 7 in the range
+  //  There are 6 values in the domain and 6 in the range
   //  And there should be same number in both for ordinal() scale
   color.domain(d3.keys(data[0]).filter(function(key) { return key !== "salesgroup"; }));
 
   // for each object in the data array (d)
+  // .. create cummulativeSales array and sort it by productVolume
+  data.forEach(function(d) {
+    d.cummulativeSales = color.domain().map(function(name) { return {name: name, y0: 0,  productVolume: +d[name], y1: 0}; });
+
+   // sort items in cummulativeSales array by productVolume descending
+    d.cummulativeSales.sort(function(a, b) { return b.productVolume - a.productVolume});
+
+  });
+
+  // for each object in the data array
+  // calculate  y0 and y1
+  //
   // ... add new key:value pairs to the object
   // ...   cummulativeSales:   an array of objects    (changed  ages --> cummulativeSales)
   // ...   total:  999
   data.forEach(function(d) {
     var y0 = 0;
+
     // loop thru the color domain using the string values as keys to access
     // ... values in key:value pairs in the object d
     // ... and calculate running totals of data counts of people in the age categories
@@ -105,7 +126,7 @@ d3.csv("salesdata_v2.csv", function(error, data) {
     // ... in data units (not translated into y coordinates)
     // d.cummulativeSales is an array of objects
     // Each d.cummulativeSales object represents one stripe in the column
-    d.cummulativeSales = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
+    d.cummulativeSales = d.cummulativeSales.map(function(dObj) { return {name: dObj.name, y0: y0,  productVolume: dObj.productVolume, y1: y0 += dObj.productVolume}; });
 
     // top of column in data values (not in y coordinates)
     d.total = d.cummulativeSales[d.cummulativeSales.length - 1].y1;
@@ -143,6 +164,18 @@ d3.csv("salesdata_v2.csv", function(error, data) {
       .style("text-anchor", "end")
       .text("Volume");
 
+  // tool tip
+  // http://bl.ocks.org/Caged/6476579
+  var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<strong style='color:red'>Volume:</strong> <span style='color:red'>" + d.total + "</span>";
+  })
+
+  svg.call(tip);
+
+
   //  http://javascript.tutorialhorizon.com/2014/11/20/a-visual-explanation-of-the-enter-update-and-exit-selections-in-d3js/
   //  enter() selection - rep­re­sents map­pings to DOM nodes
   //  ...  that will need to be cre­ated in order to map the excess data points.
@@ -154,6 +187,31 @@ d3.csv("salesdata_v2.csv", function(error, data) {
     .enter().append("g")
       .attr("class", "g")
       .attr("transform", function(d) { return "translate(" + x(d.salesgroup) + ",0)"; });
+
+// tool tip
+ var columns = svg.selectAll(".g")
+      .on('mouseover', tip.show)
+      .on('mouseout', tip.hide);
+  // ===========================================================
+
+  //  Latest attempt at fix
+
+  // You are appending the text to rect elements -- this isn't valid in SVG
+  // and the text won't show up.
+  // Instead, append the text either to a g element or the top-level SVG:
+
+  svg.selectAll("text.bar")
+    .data(data)
+  .enter().append("text")
+    //.attr("transform", "rotate(-90)")
+    //.attr("class", "bar")
+    .attr("text-anchor", "middle")
+    .attr("x", function(d) { return x(d.salesgroup) + x.rangeBand()/2; })
+    .attr("y", function(d) { return height - 30; })
+    .style("fill", "black")
+    .text(function(d) { return d.salesgroup; });
+
+  // ===========================================================
 
   // now put set of rect element inside each g element
   //  Iterates over the cummulativeSales array and adds one rect per cummulativeSales element
@@ -170,6 +228,8 @@ d3.csv("salesdata_v2.csv", function(error, data) {
       .attr("y", function(d) { return y(d.y1); })
       .attr("height", function(d) { return y(d.y0) - y(d.y1); })
       .style("fill", function(d) { return color(d.name); });
+
+
 
   // add fancy legend
   //
