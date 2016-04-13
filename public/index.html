@@ -41,8 +41,15 @@ var y = d3.scale.linear()
     .rangeRound([height, 0]);
 
 // function that translates column data name ? hex color values
+//
+//  change colors later
+
+//   There are 6 product type items,  so there must be 6 matching colors only
+//
+// var color = d3.scale.ordinal()
+//     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 var color = d3.scale.ordinal()
-    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c"]);
 
 // labels for x axis are beneath x axis
 var xAxis = d3.svg.axis()
@@ -63,7 +70,7 @@ var svg = d3.select("body").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 // async read of data from server
-d3.csv("data.csv", function(error, data) {
+d3.csv("salesdata_v2.csv", function(error, data) {
   if (error) throw error;
 
   // set domain of color scale
@@ -73,21 +80,21 @@ d3.csv("data.csv", function(error, data) {
   //
   //  COLOR DOMAIN
   //
-  // Under 5 Years
-  // 5 to 13 Years
-  // 14 to 17 Years
-  // 18 to 24 Years
-  // 25 to 44 Years
-  // 45 to 64 Years
-  // 65 Years and Over
-
+  // salesgroup
+  // windows
+  // doors
+  // decking
+  // siding
+  // molding
+  // skylights
+  //
   //  There are 7 values in the domain and 7 in the range
   //  And there should be same number in both for ordinal() scale
-  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "State"; }));
+  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "salesgroup"; }));
 
   // for each object in the data array (d)
   // ... add new key:value pairs to the object
-  // ...   ages:   999
+  // ...   cummulativeSales:   an array of objects    (changed  ages --> cummulativeSales)
   // ...   total:  999
   data.forEach(function(d) {
     var y0 = 0;
@@ -96,21 +103,21 @@ d3.csv("data.csv", function(error, data) {
     // ... and calculate running totals of data counts of people in the age categories
     // ... These are the tops and bottoms of the "stripes" in the column
     // ... in data units (not translated into y coordinates)
-    // d.ages is an array of objects
-    // Each d.ages object represents one stripe in the column
-    d.ages = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
+    // d.cummulativeSales is an array of objects
+    // Each d.cummulativeSales object represents one stripe in the column
+    d.cummulativeSales = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
 
     // top of column in data values (not in y coordinates)
-    d.total = d.ages[d.ages.length - 1].y1;
+    d.total = d.cummulativeSales[d.cummulativeSales.length - 1].y1;
   });
 
   // sort the objects in "data" array in desc order by data values of the top of the column
   data.sort(function(a, b) { return b.total - a.total; });
 
-  // set x domain... which are the States names
+  // set x domain... which are the salesgroup names
   // ... iterate thru all the objects in "data" array
-  // ... Get the  values for "State" key
-  x.domain(data.map(function(d) { return d.State; }));
+  // ... Get the  values for "salesgroup" key
+  x.domain(data.map(function(d) { return d.salesgroup; }));
 
   // set y domain ...
   // ... iterate thru the objects in data array
@@ -134,7 +141,7 @@ d3.csv("data.csv", function(error, data) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Population");
+      .text("Volume");
 
   //  http://javascript.tutorialhorizon.com/2014/11/20/a-visual-explanation-of-the-enter-update-and-exit-selections-in-d3js/
   //  enter() selection - rep­re­sents map­pings to DOM nodes
@@ -142,22 +149,22 @@ d3.csv("data.csv", function(error, data) {
   //
   //  each of these new g elements is a column
   //  The data for each g element is the object in the data array
-  var state = svg.selectAll(".state")
+  var state = svg.selectAll(".salesgroup")
       .data(data)
     .enter().append("g")
       .attr("class", "g")
-      .attr("transform", function(d) { return "translate(" + x(d.State) + ",0)"; });
+      .attr("transform", function(d) { return "translate(" + x(d.salesgroup) + ",0)"; });
 
   // now put set of rect element inside each g element
-  //  Iterates over the ages array and adds one rect per ages element
+  //  Iterates over the cummulativeSales array and adds one rect per cummulativeSales element
 
   // ... rect element has width and height
   // Inherits  data object from parent element
   //
-  //  ages array elements are the data here
+  //  cummulativeSales array elements are the data here
 
   state.selectAll("rect")
-      .data(function(d) { return d.ages; })
+      .data(function(d) { return d.cummulativeSales; })
     .enter().append("rect")
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.y1); })
