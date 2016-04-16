@@ -1,0 +1,243 @@
+
+git clone git@github.com:mjhea0/node-postgres-sequelize.git  <-- replace with my account
+cd node-postgres-sequelize
+git checkout tags/v1
+npm install
+
+npm install sequelize pg pg-hstore --save
+
+npm install sequelize-cli --save
+
+cd node-postgres-sequelize
+
+touch .sequelizerc
+
+// put this in .sequelizerc
+
+          var path = require('path');
+
+          module.exports = {
+            'config': path.resolve('./server', 'config.json'),
+            'migrations-path': path.resolve('./server', 'migrations'),
+            'models-path': path.resolve('./server', 'models'),
+            'seeders-path': path.resolve('./server', 'seeders')
+          }
+
+node_modules/.bin/sequelize init
+
+dropdb fastbid  <--  if it already exists
+createdb fastbid
+
+// edit node-postgres-sequelize/server/config.js
+
+    "development": {
+        "username": "your_user_name",
+        "password": "null",
+        "database": "fastbid",
+        "host": "127.0.0.1",
+        "port": "5432",
+        "dialect": "postgres"
+      },
+
+node_modules/.bin/sequelize db:migrate
+
+
+psql postgres
+> /list
+
+
+//  you can skip this part
+
+node_modules/.bin/sequelize model:create --name Customer --attributes "name:string"
+
+node_modules/.bin/sequelize model:create --name Salesgroup --attributes "name:string"
+
+node_modules/.bin/sequelize model:create --name Salesperson --attributes "name:string"
+
+node_modules/.bin/sequelize model:create --name ProductType --attributes "name:string"
+
+node_modules/.bin/sequelize model:create --name Product --attributes "name:string"
+
+node_modules/.bin/sequelize model:create --name Distributor --attributes "name:string"
+
+node_modules/.bin/sequelize model:create --name Order --attributes "name:string"
+
+// cd to root directory   /simple-express-static-server
+
+node_modules/.bin/sequelize db:migrate
+
+
+psql fastbid
+> \dt
+
+                List of relations
+ Schema |     Name      | Type  |      Owner
+--------+---------------+-------+-----------------
+ public | Customers     | table | stephaniebeaton
+ public | Distributors  | table | stephaniebeaton
+ public | Orders        | table | stephaniebeaton
+ public | ProductTypes  | table | stephaniebeaton
+ public | Products      | table | stephaniebeaton
+ public | Salesgroups   | table | stephaniebeaton
+ public | Salespeople   | table | stephaniebeaton
+ public | SequelizeMeta | table | stephaniebeaton
+(8 rows)
+
+\d+ Customers
+
+ \d myTable describe table
+
+ select * from "Customers";
+ id | name | createdAt | updatedAt
+----+------+-----------+-----------
+(0 rows)
+
+
+// Seed file  --  missing
+node_modules/.bin/sequelize db:seed
+
+INSERT INTO "Customers" (name, "createdAt", "updatedAt") VALUES ('Beazer Homes USA', current_date, current_date);
+
+INSERT INTO "Customers" (name, "createdAt", "updatedAt") VALUES ('D.R. Horton Inc.', current_date, current_date);
+INSERT INTO "Customers" (name, "createdAt", "updatedAt") VALUES ('Lennar Corp.', current_date, current_date);
+INSERT INTO "Customers" (name, "createdAt", "updatedAt") VALUES ('PulteGroup Inc', current_date, current_date);
+INSERT INTO "Customers" (name, "createdAt", "updatedAt") VALUES ('NVR Inc.', current_date, current_date);
+INSERT INTO "Customers" (name, "createdAt", "updatedAt") VALUES ('Toll Brothers', current_date, current_date);
+INSERT INTO "Customers" (name, "createdAt", "updatedAt") VALUES ('Taylor Morrison', current_date, current_date);
+INSERT INTO "Customers" (name, "createdAt", "updatedAt") VALUES ('The Ryland Group', current_date, current_date);
+INSERT INTO "Customers" (name, "createdAt", "updatedAt") VALUES ('KB Home', current_date, current_date);
+INSERT INTO "Customers" (name, "createdAt", "updatedAt") VALUES ('Standard Pacific Home', current_date, current_date);
+
+// Distributors
+
+INSERT INTO "Distributors" (name, "createdAt", "updatedAt") VALUES ('Distributor 1', current_date, current_date);
+
+INSERT INTO "Distributors" (name, "createdAt", "updatedAt") VALUES ('Distributor 2', current_date, current_date);
+INSERT INTO "Distributors" (name, "createdAt", "updatedAt") VALUES ('Distributor 3', current_date, current_date);
+INSERT INTO "Distributors" (name, "createdAt", "updatedAt") VALUES ('Distributor 4', current_date, current_date);
+INSERT INTO "Distributors" (name, "createdAt", "updatedAt") VALUES ('Distributor 5', current_date, current_date);
+INSERT INTO "Distributors" (name, "createdAt", "updatedAt") VALUES ('Distributor 6', current_date, current_date);
+INSERT INTO "Distributors" (name, "createdAt", "updatedAt") VALUES ('Distributor 7', current_date, current_date);
+INSERT INTO "Distributors" (name, "createdAt", "updatedAt") VALUES ('Distributor 8', current_date, current_date);
+
+// Product Types
+INSERT INTO "Producttypes" (name, "createdAt", "updatedAt") VALUES ('Product Types 1', current_date, current_date);
+
+
+// Products
+INSERT INTO "Products" (name, "ProducttypeId", "createdAt", "updatedAt") VALUES ('Windows', 1, current_date, current_date);
+INSERT INTO "Products" (name,  "ProducttypeId", "createdAt", "updatedAt") VALUES ('Doors', 1, current_date, current_date);
+INSERT INTO "Products" (name,  "ProducttypeId", "createdAt", "updatedAt") VALUES ('Decking', 1, current_date, current_date);
+INSERT INTO "Products" (name,  "ProducttypeId", "createdAt", "updatedAt") VALUES ('Siding', 1, current_date, current_date);
+INSERT INTO "Products" (name,  "ProducttypeId", "createdAt", "updatedAt") VALUES ('Molding', 1, current_date, current_date);
+INSERT INTO "Products" (name,  "ProducttypeId", "createdAt", "updatedAt") VALUES ('Skylights', 1, current_date, current_date);
+
+// Salesgroup
+
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Cook', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Harris', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Maricopa', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Orange', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Jefferson', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Clark', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Washington', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Dallas', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('San Diego', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Wayne', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Middlesex', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Santa Clara', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Suffolk', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('Jackson', current_date, current_date);
+INSERT INTO "Salesgroups" (name, "createdAt", "updatedAt") VALUES ('San Bernardino', current_date, current_date);
+
+
+// Salespeople
+INSERT INTO "Salespeople" (name,  "SalesgroupId", "createdAt", "updatedAt") VALUES ('Gary Larson', 1, current_date, current_date);
+
+INSERT INTO "Salespeople" (name,  "SalesgroupId", "createdAt", "updatedAt") VALUES ('Joe Smith', 1, current_date, current_date);
+
+// Order
+
+
+//  var sales = {salesgroup: "Gary Larson",decking: 22,doors: 16,molding: 40,siding: 31,skylights: 0};
+
+    fakeOrders.push(sales);
+
+    sales = {salesgroup: "Joe Smith",decking: 12,doors: 16,molding: 30,siding: 31,skylights: 0};
+
+    fakeOrders.push(sales);
+
+    sales = {salesgroup: "Mary Johnson",decking: 32,doors: 16,molding: 20,siding: 31,skylights: 0};
+
+    fakeOrders.push(sales);
+
+    sales = {salesgroup: "Sue Gilmore",decking: 42,doors: 16,molding: 20,siding: 31,skylights: 0};
+
+    fakeOrders.push(sales);
+
+     sales = {salesgroup: "Alan Tate",decking: 12,doors: 16,molding: 12,siding: 31,skylights: 0};
+
+// Gary Larson
+
+INSERT INTO "Orders" (name,  "orderNum", submit_date, quantity, "ProductId", "CustomerId", "SalespersonId", "DistributorId",  "createdAt", "updatedAt") VALUES ('Home Depot to Beazer Homes', 1, current_date, 5, 1, 1, 1, 1, current_date, current_date);
+
+INSERT INTO "Orders" (name,  "orderNum", submit_date, quantity, "ProductId", "CustomerId", "SalespersonId", "DistributorId",  "createdAt", "updatedAt") VALUES ('Home Depot to Beazer Homes', 1, current_date, 5, 1, 1, 1, 1, current_date, current_date);
+
+INSERT INTO "Orders" (name,  "orderNum", submit_date, quantity, "ProductId", "CustomerId", "SalespersonId", "DistributorId",  "createdAt", "updatedAt") VALUES ('Home Depot to Beazer Homes', 1, current_date, 5, 2, 1, 1, 1, current_date, current_date);
+
+INSERT INTO "Orders" (name,  "orderNum", submit_date, quantity, "ProductId", "CustomerId", "SalespersonId", "DistributorId",  "createdAt", "updatedAt") VALUES ('Home Depot to Beazer Homes', 1, current_date, 5, 3, 1, 1, 1, current_date, current_date);
+
+INSERT INTO "Orders" (name,  "orderNum", submit_date, quantity, "ProductId", "CustomerId", "SalespersonId", "DistributorId",  "createdAt", "updatedAt") VALUES ('Home Depot to Beazer Homes', 1, current_date, 5, 4, 1, 1, 1, current_date, current_date);
+
+INSERT INTO "Orders" (name,  "orderNum", submit_date, quantity, "ProductId", "CustomerId", "SalespersonId", "DistributorId",  "createdAt", "updatedAt") VALUES ('Home Depot to Beazer Homes', 1, current_date, 5, 5, 1, 1, 1, current_date, current_date);
+
+INSERT INTO "Orders" (name,  "orderNum", submit_date, quantity, "ProductId", "CustomerId", "SalespersonId", "DistributorId",  "createdAt", "updatedAt") VALUES ('Home Depot to Beazer Homes', 1, current_date, 5, 6, 1, 1, 1, current_date, current_date);
+
+// Joe Smith
+
+INSERT INTO "Orders" (name,  "orderNum", submit_date, quantity, "ProductId", "CustomerId", "SalespersonId", "DistributorId",  "createdAt", "updatedAt") VALUES ('Home Depot to Beazer Homes', 1, current_date, 5, 1, 1, 2, 1, current_date, current_date);
+
+INSERT INTO "Orders" (name,  "orderNum", submit_date, quantity, "ProductId", "CustomerId", "SalespersonId", "DistributorId",  "createdAt", "updatedAt") VALUES ('Home Depot to Beazer Homes', 1, current_date, 5, 1, 1, 2, 1, current_date, current_date);
+
+INSERT INTO "Orders" (name,  "orderNum", submit_date, quantity, "ProductId", "CustomerId", "SalespersonId", "DistributorId",  "createdAt", "updatedAt") VALUES ('Home Depot to Beazer Homes', 1, current_date, 5, 2, 1, 2, 1, current_date, current_date);
+
+curl --data "distributorId=michael@mherman.org" http://127.0.0.1:3000/orders
+
+
+    //   submit_date: req.body.submit_date,
+    //   distributor: req.body.distributorId,
+    //   customer:    req.body.customerId
+
+
+
+
+SELECT "id", "name", "orderNum", "submit_date", sum("quantity"), "updatedAt", "createdAt", "CustomerId", "DistributorId", "SalespersonId", "ProductId" FROM "Orders" AS "Order" GROUP BY "Order.id" "ProductId" ;
+
+
+SELECT
+ id,
+ SUM (quantity)
+FROM
+ "Orders"
+GROUP BY
+ id, "ProductId";
+
+SELECT
+ "SalespersonId","Salespeople"."name" AS salesperson_name, "ProductId", "Products"."name" AS product_name, SUM (quantity)
+FROM
+ "Orders", "Products", "Salespeople"
+WHERE "Orders"."ProductId" = "Products"."id"
+AND "Orders"."SalespersonId" = "Salespeople"."id"
+GROUP BY
+ "Orders"."SalespersonId", "Salespeople"."name", "Orders"."ProductId", "Products"."name"
+ ORDER BY
+  "Orders"."SalespersonId", "Products"."name";
+
+select * from table1 left join table2 on table1.id=table2.tbl1_fk ;
+
+
+
+
+
+
+
