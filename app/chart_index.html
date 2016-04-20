@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+</html>
+  <head>
+    <meta charset="utf-8">
+    <title>fastbids dashboard</title>
+    <style>
+
+        body {
+          font: 10px sans-serif;
+        }
+
+        .axis path,
+        .axis line {
+          fill: none;
+          stroke: #000;
+          shape-rendering: crispEdges;
+        }
+
+        .bar {
+          fill: steelblue;
+        }
+
+        .x.axis path {
+          display: none;
+        }
+
+        .salesperson text {
+          fill: black;
+          font: 10px sans-serif;
+          text-anchor: end;
+        }
+
+        /* ------ */
+
+        .container {
+          display: block;
+          /* height: 700px; */  /* fix with media queries ?? */
+          height: 600px;
+        }
+        .first-chart {
+          background-color: #CCFFFF;
+          border: 1px solid black;
+          display: block;
+          height: 100%;
+          /* width: 100%; */
+          position: relative;
+        }
+
+        .center {
+          border: 2px solid red;
+          margin: 0 auto;
+          text-align: center;
+          width: 10%;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translateY(-50%);
+          transform: translateX(-50%);
+        }
+
+        .second-chart {
+          background-color: #FFCCE5;   /* very pale pink */
+          border: 1px solid black;
+          display: block;
+          float: left;
+          height: 50%;
+          width: 49%;
+          position: relative;
+        }
+
+        .third-chart {
+          background-color: #F0FFF0;   /* very light green */
+          border: 1px solid black;
+          display: block;
+          float: right;
+          height: 50%;
+          width: 49%;
+          position: relative;
+        }
+
+        .bottom-filler {
+          background-color: #d3d3d3;   /* light-grey */
+          height: 10%;
+          width: 100%;
+        }
+
+        .footer {
+          border: 1px solid black;
+          position: fixed;
+          /* display: none; */
+          bottom: 0px;
+          left: 0px;
+          background-color: #d3d3d3;
+          height: 10%;
+          width: 100%;
+        }
+
+
+    </style>
+  </head>
+  <body>
+    <main>
+      <div data-ng-app="chartApp" data-ng-controller="salesController">
+        <h1>fasterbid -- Salesmen tab</h1>
+        <div linear-chart chart-data="salesData"></div>
+      </div>
+    </main>
+
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <!-- tool tip -->
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+
+    <script src="./js/angular/angular.js"></script>
+    <script src="./js/chart_client.js"></script>
+
+  </body>
+</html>
